@@ -69,3 +69,21 @@ class CheckersEnv:
         print("  " + " ".join([str(i) for i in range(self.board_size)]))
         for i in range(self.board_size):
             print(str(i) + " " + " ".join([str(int(x)) for x in self.board[i]]))
+
+    def move_to_action_index(self, move):
+        """
+        Translate a move to an action index.
+
+        :param move: A tuple representing the move, e.g., ((start_x, start_y), (end_x, end_y))
+        :return: The index of the move in the list of legal actions.
+        """
+        legal_moves = self.get_legal_moves(self.current_player)
+        try:
+            return legal_moves.index(move)
+        except ValueError:
+            # Move not found in legal moves, indicating an issue or invalid move
+            print("Move not found in legal actions:", move)
+            return None
+
+    def is_game_over(self):
+        return not self.get_legal_moves(self.current_player)

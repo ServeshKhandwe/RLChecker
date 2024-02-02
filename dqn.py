@@ -5,6 +5,8 @@ import numpy as np
 import random
 from collections import deque
 from CheckersEnv import CheckersEnv
+from agentEvaluator import AgentEvaluator
+from mini_max_agent import MinimaxAgent
 
 
 class DQN(nn.Module):
@@ -107,20 +109,20 @@ def main():
     state_size = board_size * board_size
     action_size = board_size * board_size * 2  # Considering a move can be to any of two directions for each piece
     learning_rate = 0.001
-    num_episodes = 10
+    num_episodes = 1000
     batch_size = 64
 
     env = CheckersEnv()
 
-    agent = DQNAgent(state_size, action_size, learning_rate)
-
-    print("Starting training...")
-    agent.train(env, num_episodes, batch_size)
-    print("Training completed.")
-
-    # Save the final model
-    agent.save("./final_checkers_dqn.pth")
-    print("Saved the trained model.")
+    # agent = DQNAgent(state_size, action_size, learning_rate)
+    #
+    # print("Starting training...")
+    # agent.train(env, num_episodes, batch_size)
+    # print("Training completed.")
+    #
+    # # Save the final model
+    # agent.save("./final_checkers_dqn.pth")
+    # print("Saved the trained model.")
 
     # def simulate_game(agent1, agent2, env, verbose=False):
     #     state = env.reset()
@@ -161,6 +163,17 @@ def main():
     # trained_agent.epsilon = 0  # No exploration
     # new_agent = DQNAgent(state_size, action_size, learning_rate)
     # evaluate_agents(trained_agent, new_agent, env, num_games=100)
+    # Instantiate the agents and environment
+    env = CheckersEnv()  # Assuming CheckersEnv is already defined
+    dqn_agent = DQNAgent(state_size, action_size, learning_rate)
+    dqn_agent.load("./final_checkers_dqn.pth")  # Load the trained DQN model
+    minimax_agent = MinimaxAgent(depth=3)  # Initialize the Minimax agent with the desired depth
+
+    # Instantiate the evaluator
+    evaluator = AgentEvaluator(dqn_agent, minimax_agent, env)
+
+    # Evaluate the agents
+    evaluator.evaluate_agents(num_games=10)
 
 
 if __name__ == "__main__":
